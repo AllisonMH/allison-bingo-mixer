@@ -356,6 +356,48 @@ describe('bingoLogic', () => {
         expect(result.has(id)).toBe(true);
       });
     });
+
+    it('should handle corners winning line', () => {
+      const winningLine = {
+        type: 'corners' as const,
+        index: 0,
+        squares: [0, 4, 20, 24],
+      };
+      const result = getWinningSquareIds(winningLine);
+      expect(result.size).toBe(4);
+      [0, 4, 20, 24].forEach((id) => {
+        expect(result.has(id)).toBe(true);
+      });
+    });
+  });
+
+  describe('Four Corners pattern', () => {
+    it('should return null when no corners are marked', () => {
+      const board = generateBoard();
+      expect(checkBingo(board)).toBeNull();
+    });
+
+    it('should return null when only 3 corners are marked', () => {
+      const board = generateBoard();
+      [0, 4, 20].forEach((i) => { board[i].isMarked = true; });
+      expect(checkBingo(board)).toBeNull();
+    });
+
+    it('should detect Four Corners when all four corners are marked', () => {
+      const board = generateBoard();
+      [0, 4, 20, 24].forEach((i) => { board[i].isMarked = true; });
+      const result = checkBingo(board);
+      expect(result).not.toBeNull();
+      expect(result?.type).toBe('corners');
+      expect(result?.squares).toEqual([0, 4, 20, 24]);
+    });
+
+    it('Four Corners should not trigger with scattered marks that include corners', () => {
+      const board = generateBoard();
+      // only 2 corners
+      [0, 24].forEach((i) => { board[i].isMarked = true; });
+      expect(checkBingo(board)).toBeNull();
+    });
   });
 
   describe('integration: generateBoard + toggleSquare + checkBingo', () => {
