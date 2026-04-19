@@ -1,0 +1,8 @@
+{
+  "hooks": [
+    {
+      "event": "Stop",
+      "command": "npm run test -- --run"
+    }
+  ]
+}
